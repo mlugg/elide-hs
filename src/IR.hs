@@ -9,6 +9,7 @@ data IRType
   | IR64
   | IRF32
   | IRF64
+  | IRStruct Integer -- size in bytes
   deriving (Show, Eq)
 
 data IRLiteral
