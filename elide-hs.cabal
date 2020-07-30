@@ -18,7 +18,7 @@ extra-source-files:  CHANGELOG.md
 
 executable elide-hs
   main-is:             Main.hs
-  other-modules:       AST
+  other-modules:       AST, IR
   -- other-extensions:
   build-depends:       base >=4.13 && <4.14, mtl, text
   hs-source-dirs:      src
