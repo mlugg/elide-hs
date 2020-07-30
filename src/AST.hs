@@ -42,6 +42,42 @@ data RefType = RefType
 
 -- Expressions {{{
 
+data UnOp
+  = UORef
+  | UODeref
+  | UOPreInc
+  | UOPostInc
+  | UOPreDec
+  | UOPostDec
+  | UOBoolNot
+  | UOBinNot
+  | UOSizeof
+  | UOPlus
+  | UOMinus
+  deriving (Show, Eq)
+
+data BinOp
+  = BOAdd
+  | BOSub
+  | BOMul
+  | BODiv
+  | BOMod
+  | BOBoolAnd
+  | BOBoolOr
+  | BOBinAnd
+  | BOBinOr
+  | BOBinXor
+  | BOEqual
+  | BONEqual
+  | BOAssign
+  | BOLShift
+  | BORShift
+  | BOGT
+  | BOGTE
+  | BOLT
+  | BOLTE
+  deriving (Show, Eq)
+
 data Literal
   = LBool Bool
   | LInt Signed IntSize Integer
@@ -67,6 +103,9 @@ data Expr
   | EFieldAccess Expr Text -- expr field
   | ELet RefType Text Expr Expr -- type name val body
   | ECast ValType Expr -- type expr
+
+  | EUnOp UnOp Expr
+  | EBinOp BinOp Expr Expr
   deriving (Show, Eq)
 
 -- }}}
