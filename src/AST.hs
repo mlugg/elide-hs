@@ -29,13 +29,13 @@ data ValType
   | VTNewtype Text
   | VTStruct [(Text, ValType)]
   | VTUnion [(Text, ValType)]
-  | VTFunc [RefType] ValType -- args ret
+  | VTFunc [ValType] ValType -- args ret
   deriving (Show, Eq)
 
 data RefType = RefType
   { refMut :: Bool
   , refVol :: Bool
-  , refValTo :: ValType
+  , refToVal :: ValType
   } deriving (Show, Eq)
 
 -- }}}
@@ -84,7 +84,7 @@ data Literal
   | LFloat FloatSize Double
   | LArray [Expr]
   | LStruct [Expr]
-  | LFunc [(Text, RefType)] ValType Expr -- args ret body
+  | LFunc [(Text, ValType)] ValType Expr -- args ret body
   deriving (Show, Eq)
 
 data Expr
@@ -95,6 +95,7 @@ data Expr
 
   | EIf Expr Expr (Maybe Expr) -- cond true [false]
   | EWhile Text Expr Expr -- label cond body
+  | EDefer Expr Expr -- deferred body
 
   | EBreak (Maybe Text) -- [label]
   | EContinue (Maybe Text) -- [label]
@@ -113,7 +114,7 @@ data Expr
 -- Top-level constructs {{{
 
 data TopLevel
-  = TLFunc Text [(Text, RefType)] ValType Expr -- name args ret body
+  = TLFunc Text [(Text, ValType)] ValType Expr -- name args ret body
   | TLDecl Text RefType Expr -- name type val
   | TLNamespace Text [TopLevel]
   deriving (Show, Eq)

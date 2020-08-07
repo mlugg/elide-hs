@@ -18,8 +18,8 @@ extra-source-files:  CHANGELOG.md
 
 executable elide-hs
   main-is:             Main.hs
-  other-modules:       AST, IR, Compile
+  other-modules:       AST, IR, TypeUtils, Compile, Common
   -- other-extensions:
-  build-depends:       base >=4.13 && <4.14, mtl, text
+  build-depends:       base >=4.13 && <4.14, mtl, text, containers
   hs-source-dirs:      src
   default-language:    Haskell2010

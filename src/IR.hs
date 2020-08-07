@@ -2,27 +2,22 @@ module IR where
 
 import Data.Text(Text)
 
+import AST
+
+irPtrType = IRInt Unsigned I64
+
 data IRType
-  = IR8
-  | IR16
-  | IR32
-  | IR64
-  | IRF32
-  | IRF64
+  = IRInt Signed IntSize
+  | IRFloat FloatSize
   | IRStruct Integer -- size in bytes
   deriving (Show, Eq)
 
 data IRLiteral
-  = IRLit8 Integer
-  | IRLit16 Integer
-  | IRLit32 Integer
-  | IRLit64 Integer
-  | IRFLit32 Double
-  | IRFLit64 Double
-  | IRFLit80 Double
+  = IRIntLit Signed IntSize Integer
+  | IRFloatLit FloatSize Double
   deriving (Show, Eq)
 
-data IROperator
+data IRBinOp
   = IROpAdd
   | IROpSub
   | IROpMul
@@ -38,6 +33,13 @@ data IROperator
   | IROpXor
   | IROpEqual
   | IROpNEqual
+  deriving (Show, Eq)
+
+data IRUnOp
+  = IROpInc
+  | IROpDec
+  | IROpBinNot
+  | IROpNegate
   deriving (Show, Eq)
 
 type IRBlock = [IRNode]
@@ -64,24 +66,36 @@ data IRNode
   -- Pushes a literal onto the stacck
   | IRPushLit IRLiteral
 
-  -- Pushes the value at the given offset into the stack frame
-  | IRGetOffset Integer IRType
-
-  -- Pops a value and uses it to replace the value at the given offset
-  -- into the stack frame
-  | IRSetOffset Integer IRType
+  -- Pushes the address of the given offset into the stack frame
+  | IRGetOffsetAddr Integer
 
   -- Pops a pointer, and dereferences it as the given type, pushing the
   -- value
   | IRDeref IRType
 
+  -- Pops a value of the given type followed by a pointer, and sets the
+  -- pointer destination to the value
+  | IRSetAddr IRType
+
   -- Pops a value of the given type and discards it
   | IRPop IRType
 
-  -- Pops a value, negates / binary NOTs it, and pushes the result
-  | IRNegate IRType
-  | IRInvert IRType
+  -- Pops a 1-byte value, boolean NOTs it, and pushes the result
+  | IRNot
 
   -- Pops a then b of the given type, and pushes a <op> b
-  | IRBinOp IRType IROperator
+  | IRBinOp IRType IRBinOp
+
+  -- Pops a of the given types and pushes <op> a
+  | IRUnOp IRType IRUnOp
+
+  -- Duplicates the given type of value on the top of the stack
+  | IRDup IRType
+
+  -- Rotates the two values on top of the stack (IRRot2 a b means top of
+  -- stack has type a, next val has type b)
+  | IRRot2 IRType IRType
+
+  -- Right-rotates the top 3 values on the stack with the given ty[es
+  | IRRot3 IRType IRType IRType
   deriving (Show, Eq)
